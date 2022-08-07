@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../widgets/chat/messages.dart';
+import '../widgets/chat/new_message.dart';
+
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -42,39 +45,15 @@ class ChatScreen extends StatelessWidget {
           )
         ],
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection(
-              "chats/ESW4Hpp5tGKGXrcd1qRN/messages",
-            )
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-          return streamSnapshot.connectionState == ConnectionState.waiting
-              ? const CircularProgressIndicator()
-              : ListView.builder(
-                  itemCount: streamSnapshot.data?.docs.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(streamSnapshot.data?.docs[index]['text']),
-                    );
-                  },
-                );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          FirebaseFirestore.instance
-              .collection(
-            "chats/ESW4Hpp5tGKGXrcd1qRN/messages",
-          )
-              .add(
-            {
-              'text': 'A new text!!!',
-            },
-          );
-        },
-        child: const Icon(Icons.add),
+      body: Container(
+        child: Column(
+          children: const [
+            Expanded(
+              child: Messages(),
+            ),
+            NewMessage(),
+          ],
+        ),
       ),
     );
   }

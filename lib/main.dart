@@ -26,11 +26,12 @@ class MyApp extends StatelessWidget {
           secondary: Colors.deepPurple,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
-        )),
+        ),
         buttonTheme: ButtonThemeData(
           buttonColor: Colors.pink,
           textTheme: ButtonTextTheme.primary,
