@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
+  final bool isLoading;
   final void Function(
     String email,
     String password,
     String username,
     bool isLogin,
+    BuildContext context,
   ) submitFn;
   const AuthForm(
-    this.submitFn, {
+    this.submitFn,
+    this.isLoading, {
     Key? key,
-  }) : super(key: key);
+  }) : super(
+          key: key,
+        );
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -24,7 +29,7 @@ class _AuthFormState extends State<AuthForm> {
   String _userPassword = '';
 
   void _trySubmit() {
-    if (_formKey.currentContext == null) {
+    if (_formKey.currentState == null) {
       return;
     }
     final isValid = _formKey.currentState!.validate();
@@ -32,10 +37,11 @@ class _AuthFormState extends State<AuthForm> {
     if (isValid) {
       _formKey.currentState!.save();
       widget.submitFn(
-        _userEmail,
+        _userEmail.trim(),
         _userPassword,
-        _userName,
+        _userName.trim(),
         _isLogin,
+        context,
       );
     }
   }
@@ -49,8 +55,8 @@ class _AuthFormState extends State<AuthForm> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(
+            key: _formKey,
             child: Column(
-              key: _formKey,
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
@@ -64,7 +70,9 @@ class _AuthFormState extends State<AuthForm> {
                     return null;
                   },
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: "Email"),
+                  decoration: const InputDecoration(
+                    labelText: "Email",
+                  ),
                   onSaved: (value) {
                     if (value != null) {
                       _userEmail = value;
@@ -106,22 +114,25 @@ class _AuthFormState extends State<AuthForm> {
                 const SizedBox(
                   height: 12,
                 ),
-                ElevatedButton(
-                  onPressed: _trySubmit,
-                  child: Text(
-                    _isLogin ? "Login" : "Signup",
+                if (widget.isLoading) const CircularProgressIndicator(),
+                if (!widget.isLoading)
+                  ElevatedButton(
+                    onPressed: _trySubmit,
+                    child: Text(
+                      _isLogin ? "Login" : "Signup",
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isLogin = !_isLogin;
-                    });
-                  },
-                  child: Text(_isLogin
-                      ? "Create new account"
-                      : "I already have an account"),
-                ),
+                if (!widget.isLoading)
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
+                    child: Text(_isLogin
+                        ? "Create new account"
+                        : "I already have an account"),
+                  ),
               ],
             ),
           ),
